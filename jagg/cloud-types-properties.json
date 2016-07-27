@@ -1,0 +1,18 @@
+{
+    "app-cloud" : {
+        "pageTitle": "WSO2 App Cloud",
+        "cloudTitle" : "Application Cloud",
+        "properties" : {
+            "documentationUrl": "AppCloud.Documentation.Url",
+            "supportUrl": "AppCloud.Support.Url"
+        }
+    },
+    "integration-cloud" : {
+        "pageTitle": "WSO2 Integration Cloud",
+        "cloudTitle" : "Integration Cloud",
+        "properties" : {
+            "documentationUrl": "IntegrationCloud.Documentation.Url",
+            "supportUrl": "IntegrationCloud.Support.Url"
+        }
+    }
+}
