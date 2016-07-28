@@ -1767,4 +1767,15 @@ var getAllowedContainerSpecificationsForRuntime = function(runtimeID) {
      return applicationArray;
  }
 
+var getAppMetaData = function (application) {
+    try {
+        var containerApiUrl = "http://localhost:8290/container/endpoints";
+        var metaData = get(containerApiUrl, {}, "json");
+        return metaData;
+    } catch (e) {
+        log.error("Error while getting app meta data for application " + application.name);
+        log.error(e);
+        throw e;
+    }
+};
 %>
