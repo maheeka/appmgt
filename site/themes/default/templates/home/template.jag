@@ -63,7 +63,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var APPLICATION_RUNNING = "<%=APPLICATION_RUNNING%>";
     var APPLICATION_INACTIVE = "<%=APPLICATION_INACTIVE%>";
     var pageTitle = "<%=outputs.pageTitle%>";
-    var appMetaData = "<%=appMetaData%>";
+    var appMetaData = <%=appMetaData%>;
 </script>
 
     <div class="right-pane">
@@ -250,7 +250,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                        %>
                                            <tr>
                                              <td><%= api.name %></td>
-                                             <td><a><%= api.context %></a></td>
+                                             <td><a><%= defaultAppLaunchURL + api.context %></a></td>
                                            </tr>
                                        <% } %>
                                   </table>
