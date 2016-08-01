@@ -80,15 +80,15 @@ DSSEndpointsExtractor.prototype = Object.create(EndpointsExtractor);
 
 // actual implementation goes here
 WarEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
-    return createJsonResponse(null, null, {"url" : deploymentUrl});
+    return ;
 };
 
 PHPEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
-    return createJsonResponse(null, null, {"url" : deploymentUrl});
+    return ;
 };
 
 MSSEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
-    return createJsonResponse(null, null, {"url" : deploymentUrl});
+    return ;
 };
 
 ESBEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
@@ -132,11 +132,11 @@ ESBEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
 };
 
 JaggeryEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
-    return createJsonResponse(null, null, {"url" : deploymentUrl});
+    return ;
 };
 
 DSSEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
-    return createJsonResponse(null, null, {"url" : deploymentUrl});
+    return ;
 };
 
 
@@ -164,15 +164,5 @@ var getEndpointsExtractor = function(appType) {
     if (appType == "wso2dataservice") {
         return new DSSEndpointsExtractor();
     }
-};
-
-var createJsonResponse = function (restEndpoints, soapEndpoints, webEndpoints){
-    return {
-        "endpoints" : {
-            "rest" : restEndpoints,
-            "soap" : soapEndpoints,
-            "web" : webEndpoints
-        }
-    };
 };
 %>
