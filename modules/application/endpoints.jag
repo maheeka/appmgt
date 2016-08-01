@@ -92,7 +92,43 @@ MSSEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
 };
 
 ESBEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
-    return createJsonResponse(null, null, {"url" : deploymentUrl});
+    var containerApiUrl = deploymentUrl + "/container/endpoints";
+    log.info("Calling Container API : " + containerApiUrl);
+    var containerApiUrl = "http://localhost:8290/container/endpoints";
+    var endpoints = get(containerApiUrl, {}, "json");
+
+    log.info(stringify(endpoints));
+
+    var endpointHtml = "<h3>Endpoints</h3><h4>SOAP Services</h4>";
+    var endpointHtml = endpointHtml + "<table class=\"table table-responsive\">";
+    var endpointHtml = endpointHtml + "<thead class=\"thead\"><tr><th>Name</th><th>WSDL</th><th>WSDL2</th></tr></thead>";
+    var endpointHtml = endpointHtml + "<tbody>"
+
+    for (var i=0; i < endpoints.data.urls.proxies.length; i++) {
+       var proxy = endpoints.data.urls.proxies[i];
+       var proxyHtmlRow = "<tr><td>" + proxy.name + "</td><td><a href=\"" + proxy.wsdl[1] + "\">" + proxy.wsdl[1] + "</a></td><td><a href=\"" + proxy.wsdl[0] + "\">" + proxy.wsdl[0] + "</a></td></tr>";
+       var endpointHtml = endpointHtml + proxyHtmlRow;
+    }
+
+    var endpointHtml = endpointHtml + "</tbody>";
+    var endpointHtml = endpointHtml + "</table>";
+
+    var endpointHtml = endpointHtml + "<h4>REST API</h4>";
+    var endpointHtml = endpointHtml + "<table class=\"table table-responsive\">";
+    var endpointHtml = endpointHtml + "<thead class=\"thead\"><tr><th>Name</th><th>URL</th></tr></thead>";
+    var endpointHtml = endpointHtml + "<tbody>"
+
+    for (var i=0; i < endpoints.data.urls.apis.length; i++) { 
+        var api = endpoints.data.urls.apis[i];
+        var url = deploymentUrl + api.context;
+        var apiHtmlRow = "<tr><td>" + api.name + "</td><td><a href=\"" + url + "\">" + url + "</a></td></tr>";
+        var endpointHtml = endpointHtml + apiHtmlRow;
+    }
+
+    var endpointHtml = endpointHtml + "</tbody>";
+    var endpointHtml = endpointHtml + "</table>";
+
+    return endpointHtml;
 };
 
 JaggeryEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
