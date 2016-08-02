@@ -69,27 +69,29 @@ function launchApp() {
 }
 
 function displayMessage() {
-    if(selectedApplicationRevision.status == APPLICATION_STOPPED) {
-        jagg.message({
-                         modalStatus: true,
-                         type: 'warning',
-                         timeout: 3000,
-                         content: "<b>Application has been stopped. Start the application before launch.</b>"
-                     });
-    } else if(selectedApplicationRevision.status == APPLICATION_INACTIVE) {
-        jagg.message({
-                         modalStatus: true,
-                         type: 'warning',
-                         timeout: 3000,
-                         content: "<b>Application has been stopped due to inactivity. Start the application before launch.</b>"
-                     });
-    } else {
-        jagg.message({
-                         modalStatus: true,
-                         type: 'error',
-                         timeout: 3000,
-                         content: "<b>Error has occurred while application creation. If the problem persists please contact system administrator.</b>"
-                     });
+    if (selectedApplicationRevision.status != APPLICATION_RUNNING) {
+        if (selectedApplicationRevision.status == APPLICATION_STOPPED) {
+            jagg.message({
+                modalStatus: true,
+                type: 'warning',
+                timeout: 3000,
+                content: "<b>Application has been stopped. Start the application before launch.</b>"
+            });
+        } else if (selectedApplicationRevision.status == APPLICATION_INACTIVE) {
+            jagg.message({
+                modalStatus: true,
+                type: 'warning',
+                timeout: 3000,
+                content: "<b>Application has been stopped due to inactivity. Start the application before launch.</b>"
+            });
+        } else {
+            jagg.message({
+                modalStatus: true,
+                type: 'error',
+                timeout: 3000,
+                content: "<b>Error has occurred while application creation. If the problem persists please contact system administrator.</b>"
+            });
+        }
     }
 }
 /**

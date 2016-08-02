@@ -1,0 +1,241 @@
+diff --git a/index.html b/index.html
+index f0406f0..13d9bbe 100755
+--- a/index.html
++++ b/index.html
+@@ -1,3 +1,18 @@
++<!--
++  ~ Copyright (c) 2016, WSO2 Inc. (http://wso2.com) All Rights Reserved.
++  ~
++  ~ Licensed under the Apache License, Version 2.0 (the "License");
++  ~ you may not use this file except in compliance with the License.
++  ~ You may obtain a copy of the License at
++  ~
++  ~ http://www.apache.org/licenses/LICENSE-2.0
++  ~
++  ~ Unless required by applicable law or agreed to in writing, software
++  ~ distributed under the License is distributed on an "AS IS" BASIS,
++  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  ~ See the License for the specific language governing permissions and
++  ~ limitations under the License.
++  -->
+ <script type="text/javascript">
+ window.location = "site/pages/index.jag"
+ </script>
+\ No newline at end of file
+diff --git a/modules/application/endpoints.jag b/modules/application/endpoints.jag
+index 13bbb3e..89af87d 100644
+--- a/modules/application/endpoints.jag
++++ b/modules/application/endpoints.jag
+@@ -92,7 +92,43 @@ MSSEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
+ };
+ 
+ ESBEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
+-    return createJsonResponse(null, null, {"url" : deploymentUrl});
++    var containerApiUrl = deploymentUrl + "/container/endpoints";
++    log.info("Calling Container API : " + containerApiUrl);
++    var containerApiUrl = "http://localhost:8290/container/endpoints";
++    var endpoints = get(containerApiUrl, {}, "json");
++
++    log.info(stringify(endpoints));
++
++    var endpointHtml = "<h3>Endpoints</h3><h4>SOAP Services</h4>";
++    var endpointHtml = endpointHtml + "<table class=\"table table-responsive\">";
++    var endpointHtml = endpointHtml + "<thead class=\"thead\"><tr><th>Name</th><th>WSDL</th><th>WSDL2</th></tr></thead>";
++    var endpointHtml = endpointHtml + "<tbody>"
++
++    for (var i=0; i < endpoints.data.urls.proxies.length; i++) {
++       var proxy = endpoints.data.urls.proxies[i];
++       var proxyHtmlRow = "<tr><td>" + proxy.name + "</td><td><a href=\"" + proxy.wsdl[1] + "\">" + proxy.wsdl[1] + "</a></td><td><a href=\"" + proxy.wsdl[0] + "\">" + proxy.wsdl[0] + "</a></td></tr>";
++       var endpointHtml = endpointHtml + proxyHtmlRow;
++    }
++
++    var endpointHtml = endpointHtml + "</tbody>";
++    var endpointHtml = endpointHtml + "</table>";
++
++    var endpointHtml = endpointHtml + "<h4>REST API</h4>";
++    var endpointHtml = endpointHtml + "<table class=\"table table-responsive\">";
++    var endpointHtml = endpointHtml + "<thead class=\"thead\"><tr><th>Name</th><th>URL</th></tr></thead>";
++    var endpointHtml = endpointHtml + "<tbody>"
++
++    for (var i=0; i < endpoints.data.urls.apis.length; i++) { 
++        var api = endpoints.data.urls.apis[i];
++        var url = deploymentUrl + api.context;
++        var apiHtmlRow = "<tr><td>" + api.name + "</td><td><a href=\"" + url + "\">" + url + "</a></td></tr>";
++        var endpointHtml = endpointHtml + apiHtmlRow;
++    }
++
++    var endpointHtml = endpointHtml + "</tbody>";
++    var endpointHtml = endpointHtml + "</table>";
++
++    return endpointHtml;
+ };
+ 
+ JaggeryEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl) {
+diff --git a/router.jag b/router.jag
+index 99ab7ff..581faa9 100644
+--- a/router.jag
++++ b/router.jag
+@@ -1,21 +1,20 @@
+ <%
+ /*
+- *  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
++ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  *
+- *  WSO2 Inc. licenses this file to you under the Apache License,
+- *  Version 2.0 (the "License"); you may not use this file except
+- *  in compliance with the License.
+- *  You may obtain a copy of the License at
++ * WSO2 Inc. licenses this file to you under the Apache License,
++ * Version 2.0 (the "License"); you may not use this file except
++ * in compliance with the License.
++ * You may obtain a copy of the License at
+  *
+- *  http://www.apache.org/licenses/LICENSE-2.0
+- *
+- *  Unless required by applicable law or agreed to in writing,
+- *  software distributed under the License is distributed on an
+- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+- *  KIND, either express or implied.  See the License for the
+- *  specific language governing permissions and limitations
+- *  under the License.
++ * http://www.apache.org/licenses/LICENSE-2.0
+  *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied. See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
+  */
+ 
+ include("/jagg/jagg.jag");
+diff --git a/site/blocks/home/block.jag b/site/blocks/home/block.jag
+index 2a01154..d9ffdd8 100644
+--- a/site/blocks/home/block.jag
++++ b/site/blocks/home/block.jag
+@@ -46,13 +46,6 @@ jagg.block("home", {
+         var selectedVersion = application.versions[selectedRevision];
+         var conSpecCpu = selectedVersion.conSpecCpu;
+         var conSpecMemory = selectedVersion.conSpecMemory;
+-        var defaultAppLaunchURL;
+-        if (application.customURL != null) {
+-            defaultAppLaunchURL = application.customURL;
+-        } else if (application.defaultURL != null) {
+-            defaultAppLaunchURL = application.defaultURL;
+-        }
+-        var appMetaData = applicationModule.getAppMetaData(defaultAppLaunchURL);
+ 
+         var pageTitle = jagg.module("manager").getCloudTypeProperties().pageTitle;
+         return {
+@@ -61,8 +54,7 @@ jagg.block("home", {
+             "conSpecCpu" : conSpecCpu,
+             "conSpecMemory" : conSpecMemory,
+             "restartCounts" : restartCounts,
+-            "pageTitle" : pageTitle,
+-            "appMetaData" : appMetaData
++            "pageTitle" : pageTitle
+         };
+     }
+ 
+diff --git a/site/themes/default/templates/home/template.jag b/site/themes/default/templates/home/template.jag
+index 9081612..c83c158 100644
+--- a/site/themes/default/templates/home/template.jag
++++ b/site/themes/default/templates/home/template.jag
+@@ -42,7 +42,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
+     } else if (application.defaultURL != null) {
+         defaultAppLaunchURL = application.defaultURL;
+     }
+-    var appMetaData = outputs.appMetaData;
+ %>
+ 
+ <script>
+@@ -62,11 +61,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
+     var APPLICATION_STOPPED = "<%=APPLICATION_STOPPED%>";
+     var APPLICATION_RUNNING = "<%=APPLICATION_RUNNING%>";
+     var APPLICATION_INACTIVE = "<%=APPLICATION_INACTIVE%>";
+-    var pageTitle = "<%=outputs.pageTitle%>";  
+-    var appMetaData;  
+-    if (application.applicationType == 'wso2esb') {
+-        appMetaData = <%=appMetaData%>;
+-    }
++    var pageTitle = "<%=outputs.pageTitle%>";
+ </script>
+ 
+     <div class="right-pane">
+@@ -197,74 +192,12 @@ jagg.template("home", function(inputs, outputs, jagg) {
+                               </div>
+                           </a>
+                       </div>
+-                      <p> <%=application.applicationType + appMetaData%> </p>
+-                      <% if (application.applicationType == 'wso2esb' && appMetaData != undefined ) {%>
+-<p> <%=application.applicationType %> </p>
++                      <% if (selectedApplicationRevision.endpoints != undefined) {%>
+                       <div class="col-xs-12 col-md-12 col-lg-12">
+                            <div class="block-replica">
+-                               <h3>Endpoints</h3>
+-                               <h4>SOAP</h4>
+-                               <% if (appMetaData.data.urls.proxies) { %>
+-                                   <style type="text/css">
+-                                      .tg  {border-collapse:collapse;border-spacing:0;}
+-                                      .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+-                                      .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+-                                      .tg .tg-yw4l{vertical-align:top}
+-                                   </style>
+-                                   <table class="tg">
+-                                        <tr>
+-                                          <th class="tg-yw4l">Name</th>
+-                                          <th class="tg-yw4l">WSDL</th>
+-                                          <th class="tg-yw4l">WSDL2</th>
+-                                        </tr>
+-
+-                                        <% for (var i=0; i < appMetaData.data.urls.proxies.length; i++) {
+-                                            var proxy = appMetaData.data.urls.proxies[i];
+-                                        %>
+-                                            <tr>
+-                                              <td><%= proxy.name %></td>
+-                                              <td><a><%= proxy.wsdl[0] %></a></td>
+-                                              <td><a><%= proxy.wsdl[1] %></a></td>
+-                                            </tr>
+-                                        <% } %>
+-                                   </table>
+-                               <% } else { %>
+-                                   <p><i>No SOAP Endpoints Found</i></p>
+-                               <% } %>
+-
+-                               <br/>
+-
+-                               <h4>REST</h4>
+-
+-                               <% if (appMetaData.data.urls.apis) { %>
+-                                  <style type="text/css">
+-                                     .tg  {border-collapse:collapse;border-spacing:0;}
+-                                     .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+-                                     .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+-                                     .tg .tg-yw4l{vertical-align:top}
+-                                  </style>
+-                                  <table class="tg">
+-                                       <tr>
+-                                         <th class="tg-yw4l">Name</th>
+-                                         <th class="tg-yw4l">Context</th>
+-                                       </tr>
+-
+-                                       <% for (var i=0; i < appMetaData.data.urls.apis.length; i++) {
+-                                           var api = appMetaData.data.urls.apis[i];
+-                                       %>
+-                                           <tr>
+-                                             <td><%= api.name %></td>
+-                                             <td><a><%= defaultAppLaunchURL + api.context %></a></td>
+-                                           </tr>
+-                                       <% } %>
+-                                  </table>
+-                              <% } else { %>
+-                                  <p><i>No REST Endpoints Found</i></p>
+-                              <% } %>
++                               <%=selectedApplicationRevision.endpoints%>
+                            </div>
+                       </div>
+-                      <% } else { %>
+-                      <p> gggg </p>
+                       <% } %>
+                         <div class="col-xs-12 col-md-9 col-lg-9">
+                             <div class="block-replica">

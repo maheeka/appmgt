@@ -357,11 +357,11 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 });
             });
         }
-
+        var polleventsID;
         function drawProgressWindow(){
             $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
             $("#app_creation_progress_modal").show();
-            setInterval(pollEvents, 2000);
+            polleventsID = setInterval(pollEvents, 2000);
         }
 
         function executeAsync(func) {
@@ -369,13 +369,13 @@ jagg.template("application", function (inputs, outputs, jagg) {
         }
 
         function pollEvents() {
-
             jagg.post("../blocks/application/application.jag", {
                 action:"getApplicationCreationEvents",
                 applicationName:$("#applicationName").val(),
                 applicationRevision:$("#applicationRevision").val()
 
             },function (result) {
+
                 $("#progress_table").html("");
                 var result = jQuery.parseJSON(result);
                 var table = "<table class='table' style='width:100%; color:black'>" ;
@@ -421,8 +421,14 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 }
 
                 table = table + "</table>";
-                $("#progress_table").html(table);
 
+                $("#app-creation-model-body").html(modalBody);
+                $("#app-creation-model-footer").html("");
+                $("#progress_table").html(table);
+                if(result.length == 0){
+                    var msg = "Error retrieving creation events for application";
+                    showAppCreationFailedNotification(msg);
+                };
                 for(var i = 0; i < result.length; i++){
                     var statusStyle;
                     var event = result[i];
@@ -432,29 +438,25 @@ jagg.template("application", function (inputs, outputs, jagg) {
                             window.location.replace("home.jag?applicationKey=" + applicationHashId);
                         }
                     } else if(event.status == "failed"){
-                        var alert = "<p>Application creation failed. </p><p>Reason: " + event.description + "</p>";
-                        var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">cancel</button>" +
-                                           "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Application Creation</button>";
-                        setTimeout(showErrorPopup, 2000);
-                        function showErrorPopup(){
-                            $("#app-creation-model-body").html(alert);
-                            $("#app-creation-model-footer").html(retry_button);
-                        }
+                        showAppCreationFailedNotification(event.description);
                     }
                 }
             },function (jqXHR, textStatus, errorThrown) {
-                 var alert = "<p>Application creation failed. " + errorThrown + "</p>";
-                 var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">Cancel</button>" +
-                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Application Creation</button>";
-                 setTimeout(showErrorPopup, 1000);
-                 function showErrorPopup(){
-                     $("#app-creation-model-body").html(alert);
-                     $("#app-creation-model-footer").html(retry_button);
-                 }
+                showAppCreationFailedNotification(errorThrown);
             });
         }
 
-
+        function showAppCreationFailedNotification(error){
+            var alert = "<p>Application creation failed. " + error + "</p>";
+            var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">Cancel</button>" +
+                               "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Application Creation</button>";
+            setTimeout(showErrorPopup, 1000);
+            function showErrorPopup(){
+                $("#app-creation-model-body").html(alert);
+                $("#app-creation-model-footer").html(retry_button);
+            }
+            clearInterval(polleventsID);
+        }
 
         /*** application form validation ***/
 
@@ -898,6 +900,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
     function retryAppCreation() {
         $('#add-application').loadingButton({action:'hide'});
+        $("#app-creation-model-body").html(modalBody);
+        $("#app-creation-model-footer").html("");
     }
 
     function goBack() {
