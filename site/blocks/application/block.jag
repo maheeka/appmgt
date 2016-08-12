@@ -46,6 +46,8 @@ jagg.block("application", {
             getAllowedContainerSpecificationsForRuntime(runtimes[0].id);
         var defaultVersion = applicationModule.getDefaultVersion(inputs.applicationName);
         var appTypeCount = applicationModule.getAllAppTypes().length;
+        var cloudSpecificApplicationRepresentation = jagg.module("manager").getCloudTypeProperties().cloudSpecificApplicationRepresentation;
+
 
         return {
             "runtimes" : runtimes,
@@ -57,7 +59,8 @@ jagg.block("application", {
             "maxAppCount" : maxAppCount,
             "allowedContainerSpecs" : allowedContainerSpecs,
             "defaultVersion" : defaultVersion,
-            "appTypeCount" : appTypeCount
+            "appTypeCount" : appTypeCount,
+            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation
         };
     }
 });

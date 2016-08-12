@@ -72,7 +72,7 @@ jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
                  <input type="text" class="form-control mygroup" id="productionCustom" name="productionCustom"
                  placeholder="Enter your custom URL" value="">
                      <span class="input-group-btn">
-                         <button class="btn btn-info" type="button" id="verifyUrl" name="verifyUrl"
+                         <button class="btn btn-info btn-primary" type="button" id="verifyUrl" name="verifyUrl"
                          onclick="verifyCustomUrl()">Verify URL</button>
                      </span>
              </div>

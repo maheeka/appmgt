@@ -20,6 +20,17 @@
 jagg.block("footer", {
     initialize:function (data) {
 
+    },
+    getInputs: function () {
+
+    },
+    getOutputs: function (inputs) {
+        var manager = jagg.module("manager");
+        var cloudTypeProperties = manager.getCloudTypeProperties();
+
+        return {
+            "pageTitle" : cloudTypeProperties.pageTitle
+        };
     }
 });
 %>

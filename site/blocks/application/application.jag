@@ -35,13 +35,21 @@ var log = new Log();
         var applicationName = request.getParameter("applicationName");
         var appTypeName = request.getParameter("appTypeName");
         var applicationRevision = request.getParameter("applicationRevision");
-        var fileSuccessfullyUploaded = applicationModule.
-                            uploadExistingArchive(uploadedArtifact, appTypeName, applicationName, applicationRevision);
-        if (fileSuccessfullyUploaded) {
-            response.status = 200;
-            response.content = "Artifact is successfully uploaded!";
-        } else {
-            var msg = "Error while uploading file: " + uploadedArtifact.getName();
+
+        try {
+            var fileSuccessfullyUploaded = applicationModule.
+                                        uploadExistingArchive(uploadedArtifact, appTypeName, applicationName, applicationRevision);
+            if (fileSuccessfullyUploaded) {
+                response.status = 200;
+                response.content = "Artifact is successfully uploaded!";
+            } else {
+                var msg = "Error while uploading file: " + uploadedArtifact.getName();
+                log.error(msg);
+                response.status = 504;
+                response.content = msg + ". Please retry uploading";
+            }
+        } catch (e) {
+            var msg = "Uploaded artifact does not exist for application:" + applicationName + " version:" + applicationRevision;
             log.error(msg);
             response.status = 504;
             response.content = msg + ". Please retry uploading";
@@ -249,12 +257,10 @@ var log = new Log();
         var applicationHashId = applicationModule.getApplicationHashIdByName(applicationName);
         var applicationType = applicationModule.getApplication(applicationHashId).applicationType;
 
-        // delete application from kubernetes
-        applicationModule.deleteApplicationFromKubernetes(versionKey);
-
-        //Wait for the pod to get completely deleted
         try {
-            if (applicationModule.waitForPodToGetDeleted(applicationName, applicationRevision, versionKey, applicationType)) {
+            // delete application from kubernetes
+            var isDeleted = applicationModule.deleteApplicationFromKubernetes(versionKey);
+            if (isDeleted) {
                 // update application status to stopped
                 applicationModule.updateApplicationStatus(versionKey, APPLICATION_STOPPED);
                 applicationModule.deleteEventsOfAppVersions(versionKey);
@@ -262,8 +268,7 @@ var log = new Log();
                 response.message = "Application is successfully stopped.";
             } else {
                 response.status = 504;
-                response.content = "Unable to stop application within a time period of " + (podDeleteTimeOut/1000) +
-                        "s. Please submit request again.";
+                response.content = "Unable to stop application. Please submit request again.";
             }
         } catch (e) {
             var msg = "Error while waiting for the pod to get deleted for application: " + applicationName +
@@ -444,10 +449,8 @@ var log = new Log();
         response.content = "Runtime property successfully updated.";
 
     } else if (action == "getTags"){
-
         var versionKey = request.getParameter("versionKey");
         var mod = jagg.module("application");
-
         var tags = mod.getTags(versionKey);
         print(tags);
 
@@ -481,10 +484,10 @@ var log = new Log();
         var mod = jagg.module("application");
         var applicationHashId = mod.getApplicationHashIdByName(applicationName);
         print(applicationHashId);
+
     } else if (action == "deleteVersion"){
         var versionKey = request.getParameter("versionKey");
         var mod = jagg.module("application");
-
         try {
             mod.deleteVersion(versionKey, false, true);
             print(true);
@@ -509,6 +512,23 @@ var log = new Log();
             response.status = 500;
             response.content = msg;
         }
+
+    } else if (action == "deleteAppCreationEvents"){
+        var applicationName = request.getParameter("applicationName");
+        var applicationRevision = request.getParameter("applicationRevision");
+        var mod = jagg.module("application");
+        var versionHashId = applicationModule.getVersionHashId(applicationName, applicationRevision);
+        try {
+            mod.deleteEventsOfAppVersions(versionHashId);
+            print(true);
+        } catch (e) {
+            var msg = "Error while deleting application creation events for application hash id : " + applicationKey;
+            log.error(msg);
+            log.error(e);
+            response.status = 500;
+            response.content = msg;
+        }
+
     } else if (action == "getSampleArtifactUrl") {
         var appType = request.getParameter("appType");
         var managerModule = jagg.module("manager");
@@ -522,14 +542,13 @@ var log = new Log();
             response.status = 500;
             response.content = msg;
         }
-    } else if (action == "isUploadUrlValid") {
 
+    } else if (action == "isUploadUrlValid") {
         var appTypeName = request.getParameter("appTypeName");
         var appTypeExtension = request.getParameter("appTypeExtension");
         var managerModule = jagg.module("manager");
         var url = request.getParameter("url");
         var currentExtension = url.split(/[. ]+/).pop();
-
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.send();
@@ -538,11 +557,17 @@ var log = new Log();
         } else {
             print(false);
         }
+    } else if (action == "loadEndpoints") {
+        var deploymentURL = request.getParameter("deploymentURL");
+        var appType = request.getParameter("appType");
+        var versionId = request.getParameter("versionId");
+        var mod = jagg.module("application");
+        var endpoints = mod.getEndpointsExtractor(appType).getEndpoints(deploymentURL, versionId);
+        print(endpoints);
     } else {
         throw new Error("No action specified for: " + action);
     }
 }());
-
 
 function validateRequired(field, value) {
     if (value == null || value.trim().length == 0) {
@@ -557,20 +582,17 @@ function validateApplicationName(field, value) {
     if (validateRequired(field, value)) {
         return true;
     }
-
     if (!isNaN(value)) {
         response.status = 400;
         response.content = "Bad request : Non-alphanumeric characters are not allowed for " + field;
         return true;
     }
-
     var patternNonAlphaNumExceptHyphen = /[^a-zA-Z\d\-\_ ]/g;
     if (patternNonAlphaNumExceptHyphen.test(value)) {
         response.status = 400;
         response.content = "Bad request : Application Name has invalid characters. Valid characters are [a-z, A-Z, 0-9, _, -]";
         return true;
     }
-
     return false;
 }
 
@@ -578,7 +600,6 @@ function validationApplicationRevision(field, value) {
     if (validateRequired(field, value)) {
         return true;
     }
-
     if (!isNaN(value)) {
         response.status = 400;
         response.content = "Bad request : Invalid version number - Provide version number in format major.minor.patch";
@@ -591,7 +612,6 @@ function validationApplicationRevision(field, value) {
         response.content = "Bad request : Invalid version number - Provide version number in format major.minor.patch";
         return true;
     }
-
     return false;
 }
 
@@ -599,13 +619,11 @@ function validateRequiredAndNumber(field, value) {
     if (validateRequired(field, value)) {
         return true;
     }
-
     if (isNaN(value) || value <= 0) {
         response.status = 400;
         response.content = "Bad request : " + field + " should be a number more than 0";
         return true;
     }
-
     return false;
 }
 %>

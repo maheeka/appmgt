@@ -47,7 +47,8 @@ jagg.block("page/master", {
     getInputBlocks:function () {
         return [
             "body",
-            "leftMenu"
+            "leftMenu",
+            "footer"
         ];
     }
 
