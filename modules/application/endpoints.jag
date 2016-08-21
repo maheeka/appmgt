@@ -21,6 +21,7 @@ include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 var log = new Log();
 var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;
+var modManager = jagg.module("manager");
 /*
 -----------------------------------------------------------------
     Sample JSON message we need to return
@@ -85,11 +86,14 @@ MSSEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl, versionI
 };
 
 ESBEndpointsExtractor.prototype.getEndpoints = function (deploymentUrl, versionId) {
-    var containerApiUrl = deploymentUrl + "/container/endpoints";
+    var tenantDomain = modManager.getTenantDomain();
+    var containerApiUrl = deploymentUrl + "/t/" + tenantDomain + "/container/endpoints";
+    log.info("Invoking Container API : " + containerApiUrl);
     var endpoints = undefined;
 
     try {
         endpoints = get(containerApiUrl, {}, "json");
+        log.info("Response from Container API : " + endpoints);
 
         var restEndpoints = [];
         var soapEndpoints = [];

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="org.wso2.appcloud.provisioning.runtime-3.0.0-SNAPSHOT1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/components/org.wso2.appcloud.provisioning.runtime/target/org.wso2.appcloud.provisioning.runtime-3.0.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="lib5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/org.wso2.carbon.logging-4.4.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/commons-lang-2.6.0.wso2v1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/org.wso2.ciphertool-1.0.0-wso2v3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/sandesha2-core-1.6.1-wso2v1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/org.wso2.carbon.server-4.4.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/ant-contrib-1.0b3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/xercesImpl-2.8.1.wso2v2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

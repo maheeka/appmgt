@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="endorsed">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/geronimo-jms_1.1_spec-1.1.0.wso2v1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/xml-apis-1.4.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/xml-resolver-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/woodstox-core-asl-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/xercesImpl-2.8.1.wso2v2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/stax2-api-3.1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/saxon9he.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/geronimo-jta_1.1_spec-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/tomcat-annotations-api-7.0.69.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/lib/endorsed/geronimo-jaxws_2.2_spec-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

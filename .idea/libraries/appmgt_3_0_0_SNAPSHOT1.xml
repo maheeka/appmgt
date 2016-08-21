@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="appmgt-3.0.0-SNAPSHOT1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/jaggeryapps/appmgt/target/appmgt-3.0.0-SNAPSHOT.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

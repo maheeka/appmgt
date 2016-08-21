@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="resources1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/integration/integration-tests/integration-test-scenarios/src/test/resources/sample.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/integration/integration-tests/integration-test-scenarios/src/test/resources/hellojaggery.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/integration/integration-tests/integration-test-scenarios/src/test/resources/helloworld.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="patch0351">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/setup-scripts/patches/wso2ss-1.1.0/patch0351/org.wso2.carbon.rssmanager.core_4.2.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/setup-scripts/patches/wso2ss-1.1.0/patch0351/org.wso2.carbon.rssmanager.ui_4.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

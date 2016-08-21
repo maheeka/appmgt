@@ -101,7 +101,7 @@ var addApplication = function (applicationName, versionName, applicationDescript
     if(oldHashId){
         renameDirectory(oldHashId, versionHashId, uploadedFileName);
     }
-    var absFileUploadedPath =  createDockerFile(applicationName, versionName, runtimeId, uploadedFileName,
+    var absFileUploadedPath =  createDockerFile(applicationName, versionName, appTypeName, runtimeId, uploadedFileName,
             versionHashId, dockerClient, artifactUrl, hostName, appCreationMethod, runtimeProperties, conSpecMemory);
     var buildDockerImageStatus = buildDockerImage(applicationName, versionName, runtimeId, absFileUploadedPath, applicationRuntime, tagName, versionHashId, dockerClient);
     if (buildDockerImageStatus) {
@@ -326,7 +326,7 @@ var createAppVersionInDataBase = function( versionName,   runtimeId, runtimeProp
 }
 
 
-var createDockerFile = function (applicationName, versionName, runtimeId, uploadedFileName, versionHashId, dockerClient,
+var createDockerFile = function (applicationName, versionName, appTypeName, runtimeId, uploadedFileName, versionHashId, dockerClient,
                                  artifactUrl, hostName, appCreationMethod, runtimeProperties, conSpecMemory) {
     var msg = "Docker file creation successfully triggered in appcloud";
     addEvent(DOCKER_FILE_CREATE, EVENT_PENDING, msg, versionHashId);
@@ -338,6 +338,7 @@ var createDockerFile = function (applicationName, versionName, runtimeId, upload
         var dockerFilePath = absFileUploadedPath + DOCKER_FILE_NAME;
 
         var dockerTemplateFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + "/" + "dockerfiles";
+        log.info (dockerTemplateFilePath);
 
         var uploadArtifactTmpName;
         var checkFileExtZIP = isFileExtZIP(uploadedFileName);
@@ -356,6 +357,12 @@ var createDockerFile = function (applicationName, versionName, runtimeId, upload
         dockerFilePropertyMap.put("HOST_NAME", hostName);
         dockerFilePropertyMap.put("ARTIFACT_URL", artifactUrl);
         dockerFilePropertyMap.put("VAL_TOTAL_MEMORY", conSpecMemory);
+
+        if (appTypeName == "wso2esb"){
+            dockerFilePropertyMap.put("TENANT_ID_VAL", modManager.getTenantId().toString());
+            dockerFilePropertyMap.put("TENANT_DOMAIN_VAL", modManager.getTenantDomain());
+        }
+
         var appRuntimeProperties = getRuntimeProperties(runtimeProperties);
 
         dockerClient.createDockerFile(dockerFilePath, runtimeId, dockerTemplateFilePath, appCreationMethod, dockerFilePropertyMap, appRuntimeProperties);
@@ -491,8 +498,9 @@ var getRestartCounts = function (applicationName, versionName, applicationType){
     var versionHashId = getVersionHashId(applicationName, versionName);
     var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(
             applicationName, versionName, applicationType , modManager.getTenantId(), modManager.getTenantDomain(), versionHashId);
-    var kubService = new KubernetesRuntime(applicationCtx);
-    var restartCounts = kubService.getPodRestartCounts();
+    //var kubService = new KubernetesRuntime(applicationCtx);
+    //var restartCounts = kubService.getPodRestartCounts();
+    var restartCounts = new Packages.java.util.HashMap();
     return restartCounts;
 }
 

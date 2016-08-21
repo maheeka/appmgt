@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="pdepublishing">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../SRC/app-cloud/modules/resources/dockerfiles/wso2esb/base/5.0.0/wso2esb-5.0.0/repository/components/plugins/org.eclipse.equinox.p2.publisher.eclipse_1.0.0.v20110511/pdepublishing.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

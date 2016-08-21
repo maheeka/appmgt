@@ -19,21 +19,25 @@
 FROM wso2-appcloud/wso2esb:5.0.0-base
 
 ENV CARBON_HOME_PATH /home/wso2user/wso2esb-5.0.0
-ENV CAPP_FILE ARTIFACT_NAME
-ENV TENANT_ID TENANT_ID_VAL
-ENV TENANT_DOMAIN TENANT_DOMAIN_VAL
+ENV URL https://github.com/wso2/app-cloud/raw/master/samples/artifacts/HelloESBCompositeApplication_1.0.0.car
+ENV TENANT_ID 1
+ENV TENANT_DOMAIN ws.com
+ENV TENANT_PASSWORD admin12345
 ENV CREATE_TENANT true
-ENV TENANT_PATH $CARBON_HOME_PATH/repository/tenants/$TENANT_ID/
-ENV CAR_DEPLOYMENT_DIR $CARBON_HOME_PATH/repository/tenants/$TENANT_ID/carbonapps/
-ENV RESOURCES_PATH $INSTALL_PATH/resources
-ENV APP_HOST HOST_NAME
-ENV TOTAL_MEMORY VAL_TOTAL_MEMORY
+ENV CAR_DEPLOYMENT_DIR $CARBON_HOME_PATH/repository/deployment/tenants/$TENANT_ID/carbonapps/
+ENV CONF_DIR $CARBON_HOME_PATH/repository/conf/
+ENV RESOURCES_PATH_CAPPS $INSTALL_PATH/resources/carbonapps/
+ENV RESOURCES_PATH_CONF $INSTALL_PATH/resources/conf/
+#ENV CAR_DEPLOYMENT_DIR $CARBON_HOME_PATH/repository/deployment/server/carbonapps/
+ENV APP_HOST ws-com-tyyhfghfg-1-0-0.apps.cloud.wso2.com
+ENV TOTAL_MEMORY 512
 
 RUN mkdir -p $CAR_DEPLOYMENT_DIR
 
-COPY "$CAPP_FILE" "$CAR_DEPLOYMENT_DIR"
-RUN cp -r $RESOURCES_PATH/carbonapps/ $TENANT_PATH
-RUN cp -r $RESOURCES_PATH/conf/ $CARBON_HOME_PATH/repository/
+WORKDIR "$CAR_DEPLOYMENT_DIR"
+RUN wget "$URL"
+COPY "$RESOURCES_PATH_CAPPS" "$CAR_DEPLOYMENT_DIR"
+#COPY "$RESOURCES_PATH_CONF" "$CONF_DIR"
 
 RUN sed -i '/<!--HostName>/c\\t<HostName>'$APP_HOST'</HostName>' $CARBON_HOME_PATH/repository/conf/carbon.xml && \
     sed -i '/<!--MgtHostName>/c\\t<MgtHostName>'$APP_HOST'</MgtHostName>' $CARBON_HOME_PATH/repository/conf/carbon.xml
